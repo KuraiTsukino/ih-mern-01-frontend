@@ -1,23 +1,23 @@
 import React, { useEffect, useContext } from 'react'
-import GuitarContext from '../../context/Guitar/GuitarContext'
+import StoreContext from '../../context/Store/StoreContext'
 
-export default function Guitar() {
+export default function Store() {
 
     // Estado global.
-    const ctx = useContext(GuitarContext)
+    const ctx = useContext(StoreContext)
 
-    const { guitars, hola, changeText } = ctx
+    const { stores, hola, changeText } = ctx
+
     // Estado local
 
     return (
         <>
-           <p>Listado de guitarras</p> 
+           <p>Listado de tiendas</p> 
            <p>{ hola }</p>
 
             <button onClick={ () => { changeText() }}>
                 Cambiar texto
             </button>
-
         </>
     )
 }
