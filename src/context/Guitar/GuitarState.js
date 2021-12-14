@@ -4,45 +4,59 @@
 
 import { useReducer } from "react";
 import GuitarContext from "./GuitarContext";
-import GuitarReducer from './GuitarReducer'
+import GuitarReducer from "./GuitarReducer";
+
+import axiosClient from "../../config/axios";
 
 const GuitarState = (props) => {
+  // Generar el estado global de las guitarrras, todo lo que tiene que ver con guitarras
+  // 1a sección. Initial State o Estado inicial. Esto lo mandaremos en todos los componentes através del value del guitarContext.provider
+  const initialState = {
+    guitars: [],
+    hola: "Mundo",
+  };
 
-    // Generar el estado global de las guitarrras, todo lo que tiene que ver con guitarras
-    // 1a sección. Initial State o Estado inicial. Esto lo mandaremos en todos los componentes através del value del guitarContext.provider
-    const initialState = {
-        guitars: [],
-        hola: "Mundo"
-    }
+  // 2a sección. Configuración de Reducer y creación de estado global.
+  // Reducers son funciones que alteran el estado global.
+  // El dispatch es un asistente, una acción que manda los datos a la función del Reducir, éste va a alterar el dato
+  const [globalState, dispatch] = useReducer(GuitarReducer, initialState);
 
-    // 2a sección. Configuración de Reducer y creación de estado global.
-    // Reducers son funciones que alteran el estado global.
-    // El dispatch es un asistente, una acción que manda los datos a la función del Reducir, éste va a alterar el dato
-    const [globalState, dispatch] = useReducer(GuitarReducer, initialState)
+  // 3a sección. Funciones de cambio en estado global.
+  const changeText = () => {
+    dispatch({
+      // Objeto conocido como action
+      type: "CHANGE_TEXT",
+      payload: "Estoy aprendiendo Context sin morir",
+    });
+  };
 
-    // 3a sección. Funciones de cambio en estado global.
-    const changeText = () => {
-        
-        dispatch({ // Objeto conocido como action
-            type: "CHANGE_TEXT",
-            payload: "Estoy aprendiendo Context sin morir"
-        })
-    }
+  const getGuitars = async () => {
+    const res = await axiosClient.get("guitars/readall");
+    console.log("Obteniendo guitarras...");
+    console.log(res);
 
-    // 4. Retorno.
-    return (
-        // Se necesita un proovedor para que de el acceso a los componentes al estado inicial de guitarras.
-        <GuitarContext.Provider
-            value={{
-                guitars: globalState.guitars,
-                hola: globalState.hola,
-                changeText
-            }}
-        >
-            {props.children} {/* Representación de todos los componentes, parecido a un Outlet en un estado global */}
-        </GuitarContext.Provider>
-    )
+    const list = res.data.data;
+    dispatch({
+      type: "GET_GUITARS",
+      payload: list,
+    });
+  };
 
-}
+  // 4. Retorno.
+  return (
+    // Se necesita un proovedor para que de el acceso a los componentes al estado inicial de guitarras.
+    <GuitarContext.Provider
+      value={{
+        guitars: globalState.guitars,
+        hola: globalState.hola,
+        changeText,
+        getGuitars,
+      }}
+    >
+      {props.children}{" "}
+      {/* Representación de todos los componentes, parecido a un Outlet en un estado global */}
+    </GuitarContext.Provider>
+  );
+};
 
-export default GuitarState
+export default GuitarState;
