@@ -6,6 +6,8 @@ import { useReducer } from "react";
 import StoreContext from "./StoreContext";
 import StoreReducer from "./StoreReducer";
 
+import axiosClient from "../../config/axios";
+
 const StoreState = (props) => {
 
     // Generar el estado global de las guitarrras, todo lo que tiene que ver con guitarras
@@ -26,14 +28,28 @@ const StoreState = (props) => {
             payload: "Estoy aprendiendo Context sin morir"
         })
     }
+
+    const getStores = async () => {
+        const res = await axiosClient.get("stores/readall")
+        console.log("Obteniendo tiendas...");
+        console.log(res)
+
+        const list = res.data.data
+        dispatch({
+            type: "GET_STORES",
+            payload: list,
+        })
+    }
+
     // 4. Retorno.
     return (
         // Se necesita un proovedor para que de el acceso a los componentes al estado inicial de guitarras.
         <StoreContext.Provider
             value={{
-                guitars: globalState.stores,
+                stores: globalState.stores,
                 hola: globalState.hola,
-                changeText
+                changeText,
+                getStores,
             }}
         >
             {props.children}

@@ -1,6 +1,12 @@
 const reducer = (globalState, action) => {
 
     switch (action.type) {
+
+        case "GET_STORES":
+            return {
+                ...globalState,
+                stores: action.payload
+            }
         
         case "CHANGE_TEXT":
             return {
